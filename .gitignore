@@ -1,2 +1,7 @@
-#Google Cloud Credentials
+# Google Cloud Credentials
 cred.json
+
+# Node Configs
+/node_modules
+package-lock.json
+package.json
