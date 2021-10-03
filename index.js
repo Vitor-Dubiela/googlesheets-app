@@ -27,6 +27,15 @@ app.get("/", async (req, res) => {
         }
     );
 
+    const totalClassesString = await googleSheets.spreadsheets.values.get({
+        spreadsheetId: sheetId,
+        range: "engenharia_de_software!A2:A2"
+    }).then((value) => {
+        return value.data.values;
+    }, (reason) => {
+        console.log(reason);
+    });
+
     const studentsInfo = await googleSheets.spreadsheets.values.get({
         spreadsheetId: sheetId,
         range: "engenharia_de_software!A4:F"
@@ -38,15 +47,24 @@ app.get("/", async (req, res) => {
 
     for (const row of studentsInfo) {
         let id = row[0];
-        let p1 = row[2];
-        let p2 = row[3];
-        let p3 = row[4];
-        console.log(`ID: ${id} / P1: ${p1} / P2: ${p2} / P3: ${p3}\n`);
+        let ab = row[2];
+        let p1 = row[3];
+        let p2 = row[4];
+        let p3 = row[5];
+        console.log(`ID: ${id} / Absences: ${ab} / P1: ${p1} / P2: ${p2} / P3: ${p3}\n`);
     }
 
-    // console.log(studentsInfo);
+    console.log(getTotalClasses(totalClassesString));
     res.send(JSON.stringify(studentsInfo));
 });
+
+function getTotalClasses(classesStr) {
+    let str = classesStr[0][0];
+    let totalClasses = str.substring(str.indexOf(':') + 1);
+
+    
+    return parseInt(totalClasses);
+}
 
 const port = 8080;
 const hostname = "localhost";
