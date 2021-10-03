@@ -1,0 +1,24 @@
+{
+  "name": "googlesheets-app",
+  "version": "1.0.0",
+  "description": "Google Sheets application in Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vitor-Dubiela/googlesheets-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vitor-Dubiela/googlesheets-app/issues"
+  },
+  "homepage": "https://github.com/Vitor-Dubiela/googlesheets-app#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "googleapis": "^88.2.0"
+  }
+}

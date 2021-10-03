@@ -4,4 +4,3 @@ cred.json
 # Node Configs
 /node_modules
 package-lock.json
-package.json
