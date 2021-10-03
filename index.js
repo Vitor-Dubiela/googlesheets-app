@@ -12,7 +12,7 @@ app.get("/", async (req, res) => {
         keyFile: cred,
         scopes: scope
     });
-    
+
     const client = await auth.getClient();
 
     const googleSheets = google.sheets({
@@ -26,9 +26,26 @@ app.get("/", async (req, res) => {
             spreadsheetId: sheetId
         }
     );
-    // listStudents();
 
-    res.send(metadata);
+    const studentsInfo = await googleSheets.spreadsheets.values.get({
+        spreadsheetId: sheetId,
+        range: "engenharia_de_software!A4:F"
+    }).then((value) => {
+        return value.data.values;
+    }, (reason) => {
+        console.log(reason);
+    });
+
+    for (const row of studentsInfo) {
+        let id = row[0];
+        let p1 = row[2];
+        let p2 = row[3];
+        let p3 = row[4];
+        console.log(`ID: ${id} / P1: ${p1} / P2: ${p2} / P3: ${p3}\n`);
+    }
+
+    // console.log(studentsInfo);
+    res.send(JSON.stringify(studentsInfo));
 });
 
 const port = 8080;
