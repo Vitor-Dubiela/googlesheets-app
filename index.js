@@ -100,7 +100,7 @@ app.get("/", async (req, res) => {
                 ]
             }
         }).then((value) => {
-            
+            console.log(value);
         }, (err) => {
             console.log(err);
         });
@@ -119,7 +119,7 @@ app.get("/", async (req, res) => {
                 ]
             }
         }).then((value) => {
-            
+            console.log(value);
         }, (err) => {
             console.log(err);
         });
@@ -138,13 +138,13 @@ app.get("/", async (req, res) => {
                 ]
             }
         }).then((value) => {
-            
+            console.log(value);
         }, (err) => {
             console.log(err);
         });
     }
 
-    res.send(JSON.stringify(studentsData));
+    res.send("The app is running");
 });
 
 
