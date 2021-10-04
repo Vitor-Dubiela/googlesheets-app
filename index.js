@@ -163,8 +163,9 @@ function calcAverage(p1, p2, p3) {
 
 function calcFinalGrade(average) {
     let finalGrade;
-
-    finalGrade = (average + 70) / 2;
+    let x;
+    
+    // finalGrade = ;
 
     return finalGrade;
 }
