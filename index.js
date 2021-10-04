@@ -41,7 +41,7 @@ app.get("/", async (req, res) => {
 
     const studentsData = await googleSheets.spreadsheets.values.get({
         spreadsheetId: sheetId,
-        range: "engenharia_de_software!A4:F"
+        range: "engenharia_de_software!A4:H"
     }).then((value) => {
         return value.data.values;
     }, (reason) => {
@@ -52,14 +52,34 @@ app.get("/", async (req, res) => {
 
     function printRows(sheetRows, classesNmb) {
         for (const row of sheetRows) {
-            let id = row[0];
-            let abs = row[2];
-            let p1 = row[3];
-            let p2 = row[4];
-            let p3 = row[5];
-            console.log(`ID: ${id} / Absences: ${abs} / P1: ${p1} / P2: ${p2} / P3: ${p3}\n`);
-            if (abs > allowedAbs) {
+            let id = parseInt(row[0]);
+            let abs = parseInt(row[2]);
+            let p1 = parseInt(row[3]);
+            let p2 = parseInt(row[4]);
+            let p3 = parseInt(row[5]);
 
+            let average = calcAverage(p1, p2, p3);
+            let state = getGradesSit(average);
+            let finalGrade = calcFinalGrade(average); 
+            
+            console.log(`id: ${id} / Absences: ${abs} / P1: ${p1} / P2: ${p2} / P3: ${p3} / Average: ${average}\n`);
+
+            if (abs > allowedAbs) {
+                putAbsencesSit(id + 3);
+                putFinalGrade(id + 3, 0);
+            } 
+
+            if (abs <= allowedAbs) {
+                if (average < 50) {
+                    putSittuation(id + 3, state);
+                    putFinalGrade(id + 3, 0);
+                } else if (average < 70) {
+                    putSittuation(id + 3, state);
+                    // putFinalGrade(id, finalgrade)
+                } else {
+                    putSittuation(id + 3, state);
+                    putFinalGrade(id + 3, 0);
+                }
             }
         }
         console.log(classesNmb);
@@ -67,26 +87,63 @@ app.get("/", async (req, res) => {
     }
     printRows(studentsData, classesNmb);
 
-    async function updateAbsences() {
+    async function putAbsencesSit(id) {
         await googleSheets.spreadsheets.values.update({
             auth: client,
             spreadsheetId: sheetId,
-            range: "engenharia_de_software!G4",
+            range: `engenharia_de_software!G${id}`,
             valueInputOption: 'USER_ENTERED',
             requestBody: {
-                range: "engenharia_de_software!G4",
+                range: `engenharia_de_software!G${id}`,
                 values: [
-                    ["aprovado"]
+                    ["Reprovado por Falta"]
                 ]
             }
         }).then((value) => {
-            console.log(value);
+            
         }, (err) => {
             console.log(err);
         });
     }
 
-    updateAbsences();
+    async function putSittuation(id, state) {
+        await googleSheets.spreadsheets.values.update({
+            auth: client,
+            spreadsheetId: sheetId,
+            range: `engenharia_de_software!G${id}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+                range: `engenharia_de_software!G${id}`,
+                values: [
+                    [state]
+                ]
+            }
+        }).then((value) => {
+            
+        }, (err) => {
+            console.log(err);
+        });
+    }
+
+    async function putFinalGrade(id, finalGrade) {
+        await googleSheets.spreadsheets.values.update({
+            auth: client,
+            spreadsheetId: sheetId,
+            range: `engenharia_de_software!H${id}`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: {
+                range: `engenharia_de_software!H${id}`,
+                values: [
+                    [finalGrade]
+                ]
+            }
+        }).then((value) => {
+            
+        }, (err) => {
+            console.log(err);
+        });
+    }
+
     res.send(JSON.stringify(studentsData));
 });
 
@@ -98,6 +155,32 @@ function getTotalClasses(classesStr) {
     return parseInt(totalClasses);
 }
 
+function calcAverage(p1, p2, p3) {
+    let average = (p1 + p2 + p3) / 3;
+
+    return average;
+}
+
+function calcFinalGrade(average) {
+    let finalGrade;
+
+    finalGrade = (average + 70) / 2;
+
+    return finalGrade;
+}
+
+function getGradesSit(average) {
+    let str;
+    if (average < 50) {
+        str = "Reprovado por Nota";
+    } else if (average < 70) {
+        str = "Exame Final";
+    } else {
+        str = "Aprovado";
+    }
+
+    return str;
+}
 
 const port = 8080;
 const hostname = "localhost";
