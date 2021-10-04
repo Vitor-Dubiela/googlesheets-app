@@ -13,6 +13,7 @@ Google Sheets application in Node.js
 
 ## Running the project
 - To run the application, use the following command:
-   node index
-(Optional) or if have nodemon installed, just run the code:
-   nodemon
+    node index
+- (Optional) or if have nodemon installed, just run the code:
+    nodemon
+- The app is going to execute everytime you enter the default page "localhost:8080".
